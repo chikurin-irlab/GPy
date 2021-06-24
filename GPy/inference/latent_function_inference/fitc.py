@@ -29,16 +29,21 @@ class FITC(LatentFunctionInference):
         if sigma_n.size >1:
             raise NotImplementedError("no hetero noise with this implementation of FITC")
 
-        Kmm = kern.K(Z)
-        Knn = kern.Kdiag(X)
-        Knm = kern.K(X, Z)
+        Kmm = kern.K(Z)       # 誘導入力点に対する共分散行列
+        Knn = kern.Kdiag(X)   # トレーニングデータに対する共分散行列
+        Knm = kern.K(X, Z)    # 誘導入力とトレーニングデータとの共分散行列
         U = Knm
 
         #factor Kmm
         diag.add(Kmm, self.const_jitter)
         Kmmi, L, Li, _ = pdinv(Kmm)
+        # Kmmi Kmmの逆行列
+        # L Kmmのコレスキー分解
+        # Li Kmmiのコレスキー分解
+        # _ Kmmの対数行列式
 
         #compute beta_star, the effective noise precision
+        #有効なノイズの精度を表す"beta_star"の計算
         LiUT = np.dot(Li, U.T)
         sigma_star = Knn + sigma_n - np.sum(np.square(LiUT),0)
         beta_star = 1./sigma_star
