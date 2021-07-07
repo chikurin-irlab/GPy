@@ -42,12 +42,15 @@ def view(A, offset=0):
 def offdiag_view(A, offset=0):
     from numpy.lib.stride_tricks import as_strided
     assert A.ndim == 2, "only implemented for 2 dimensions"
+        # 行列 A の次元が2次元じゃなかったら""内のエラー文を表示する．
     Af = as_strided(A, shape=(A.size,), strides=(A.itemsize,))
+        # 行列 A のメモリ確保を行ってる? ()内の"strides=()"で新しい配列の縦および横方向のバイト数の進み具合を設定
     return as_strided(Af[(1+offset):], shape=(A.shape[0]-1, A.shape[1]), strides=(A.strides[0] + A.itemsize, A.strides[1]))
 
-def _diag_ufunc(A,b,offset,func):
+def _diag_ufunc(A, b, offset, func):
     b = np.squeeze(b)
     assert b.ndim <= 1, "only implemented for one dimensional arrays"
+        # ベクトル b が1以下の場合，""内のエラー文を表示する．
     dA = view(A, offset); func(dA,b,dA)
     return A
 

@@ -22,6 +22,8 @@ class VarDTC(LatentFunctionInference):
 
     """
     const_jitter = 1e-8
+
+    # ここからキャッシュの処理内容
     def __init__(self, limit=1):
         from paramz.caching import Cacher
         self.limit = limit
@@ -62,6 +64,7 @@ class VarDTC(LatentFunctionInference):
 
     def get_VVTfactor(self, Y, prec):
         return Y * prec # TODO cache this, and make it effective
+    # ここまでキャッシュの処理内容
 
     def inference(self, kern, X, Z, likelihood, Y, Y_metadata=None, mean_function=None, precision=None, Lm=None, dL_dKmm=None, psi0=None, psi1=None, psi2=None, Z_tilde=None):
 
@@ -133,6 +136,9 @@ class VarDTC(LatentFunctionInference):
         # factor B
         B = np.eye(num_inducing) + A
         LB = jitchol(B)
+        # ここはFITCだと以下に相当する
+        # A = tdot(LiUT*np.sqrt(beta_star)) + np.eye(num_inducing)
+        # LA = jitchol(A)
 
         # back substutue C into psi1Vf
         tmp, _ = dtrtrs(Lm, psi1.T, lower=1, trans=0)

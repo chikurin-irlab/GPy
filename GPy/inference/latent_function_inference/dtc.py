@@ -15,6 +15,7 @@ class DTC(LatentFunctionInference):
     the posterior.
 
     NB. It's not recommended to use this function! It's here for historical purposes. 
+    "historical purposes"は，このDTCを扱う機能が多くあるためにVarDTCがあっても移行できないという意味．
 
     """
     def __init__(self):

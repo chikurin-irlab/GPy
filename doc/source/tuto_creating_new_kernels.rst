@@ -1,10 +1,11 @@
 ********************
-Creating new kernels
+Creating new kernels - 新しいカーネル関数の構築
 ********************
 
 We will see in this tutorial how to create new kernels in GPy. We will also give details on how to implement each function of the kernel and illustrate with a running example: the rational quadratic kernel. 
+(このチュートリアルでは、GPyで新しいカーネルを作成する方法を見ていきます。また、カーネルの各機能をどのように実装するかを詳しく説明し、実行例として有理二次カーネルを例示します。)
 
-Structure of a kernel in GPy
+Structure of a kernel in GPy - GPyにおけるカーネル関数の構造
 ============================
 
 In GPy a kernel object is made of a list of kernpart objects, which correspond to symmetric positive definite functions. More precisely, the kernel should be understood as the sum of the kernparts. In order to implement a new covariance, the following steps must be followed
@@ -14,7 +15,13 @@ In GPy a kernel object is made of a list of kernpart objects, which correspond t
 
 Theses three steps are detailed below.
 
-Implementing a Kern object
+(GPyのカーネルオブジェクトは、対称正定値関数に相当する"kernpart"オブジェクトのリストで構成されています。より正確には、カーネルは"kernpart"のすべてと理解すべきです。新しい共分散を実装するには、以下の手順を踏む必要があります。
+    1. 新しい共分散を :py:class:`GPy.kern.src.kern.Kern` オブジェクトとして実装します。
+    2. py:mod:`GPy.kern.src` ファイルを更新します。
+
+これらの3つのステップは、以下の通りです。)
+
+Implementing a Kern object - Kernオブジェクトの実装
 ==============================
 
 We advise the reader to start with copy-pasting an existing kernel and
@@ -22,7 +29,9 @@ to modify the new file. We will now give a description of the various
 functions that can be found in a Kern object, some of which are
 mandatory for the new kernel to work.
 
-Header
+既存のカーネルをコピーペーストすることから始めて、新しいファイルを修正することをお勧めします。Kernオブジェクトに含まれる様々な機能について説明します。新しいカーネルを動作させるために必須となるものもあります。
+
+Header - ヘッダー
 ~~~~~~
 
 The header is similar to all kernels: ::
@@ -31,6 +40,13 @@ The header is similar to all kernels: ::
     import numpy as np
 
     class RationalQuadratic(Kern):
+
+(ヘッダーは全てのカーネルに共通しています。
+
+    from .kern import Kern
+    import numpy as np
+    
+    class RationalQuadratic(Kern):)
 
 :py:func:`GPy.kern.src.kern.Kern.__init__` ``(self, input_dim, param1, param2, *args)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,6 +83,13 @@ From now on you can use the parameters ``self.variance,
 self.lengthscale, self.power`` as normal numpy ``array-like`` s in your
 code. Updates from the optimization routine will be done
 automatically.
+
+(この関数の実装は必須である．
+
+すべてのKernsにおいて、最初のパラメータ "input_dim" は入力空間の次元に対応し、それ以降のパラメータはカーネルのパラメータ化を表します。
+
+入力次元（および active_dims を用いた可能な次元制限）とカーネルの名前が正しい場所に保存されていることを確認するために、 ""super(<クラス名>, self).__init__(input_dim, active_dims, name)"" を呼び出す必要があります。これらの属性は、実行時に ""self.input_dim"" と ""self.name"" として利用できます。 パラメータ化は :py:class:"~GPy.core.parameterization.param.Param" オブジェクトを ""self"" に追加することで行われ、コードの中で通常の numpy の ""array-like"" として使用することができます。パラメータは :py:func:"~GPy.core.parameterization.Parameterized.link_parameters" ""(*parameters)"" を :py:class:"~GPy.core.parameterization.param.Param" オブジェクトを引数にして呼び出すことで追加されます。
+)
 
 :py:func:`~GPy.core.parameterization.parameter_core.Parameterizable.parameters_changed` ``(self)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

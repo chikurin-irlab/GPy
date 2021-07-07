@@ -35,7 +35,7 @@ class FITC(LatentFunctionInference):
         U = Knm
 
         #factor Kmm
-        diag.add(Kmm, self.const_jitter)
+        diag.add(Kmm, self.const_jitter) # 行列 Kmm にself.const_jitter = 1e-6 を加算しコアダンプ防止
         Kmmi, L, Li, _ = pdinv(Kmm)
         # Kmmi Kmmの逆行列
         # L Kmmのコレスキー分解
