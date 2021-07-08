@@ -71,7 +71,7 @@ class VarDTC(LatentFunctionInference):
         num_data, output_dim = Y.shape
         num_inducing = Z.shape[0]
 
-        uncertain_inputs = isinstance(X, VariationalPosterior)
+        uncertain_inputs = isinstance(X, VariationalPosterior) # FITCにはない
 
         if mean_function is not None:
             mean = mean_function.f(X)
@@ -84,6 +84,9 @@ class VarDTC(LatentFunctionInference):
 
         if precision.ndim == 1:
             precision = precision[:, None]
+        
+        # ここで het_noise を導入し，分散不均一性("heteroscedasticity")を考慮する．
+        # 分散不均一性についてはこの資料( http://fs1.law.keio.ac.jp/~aso/ecnm/pp/ecnmtrcs06.pdf )がおすすめ．
         het_noise = precision.size > 1
         if (het_noise or uncertain_inputs) and mean_function is not None:
             raise ValueError('Mean function not implemented with uncertain inputs or heteroscedasticity')
